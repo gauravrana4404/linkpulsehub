@@ -166,7 +166,23 @@ app.post('/api/auth/logout', auth, async (req, res) => {
 app.get('/api/auth/user', auth, async (req, res) => {
   res.json(req.user);
 });
+// Add this to your server.js
+const allowedOrigins = [
+  'https://nxp-backend1.onrender.com/',
+  'https://nxp-backend.onrender.com/',
+  'http://localhost:10000'
+];
 
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 // Backlink Routes
 app.post('/api/backlinks', auth, async (req, res) => {
   try {
