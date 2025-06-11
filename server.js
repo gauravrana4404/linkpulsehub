@@ -19,6 +19,31 @@ mongoose.connect(process.env.MONGO_URI, {
 })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error(err));
+// Replace your current allowedOrigins and CORS setup with this:
+
+const allowedOrigins = [
+  'https://nxp-backend1.onrender.com/', // Your frontend URL
+  'https://nxp-backend.onrender.com/',  // Your backend URL
+  'http://localhost:10000',             // Local development
+  'http://localhost:3000'               // Common frontend dev port
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 // Define Schemas
 const UserSchema = new mongoose.Schema({
@@ -87,6 +112,8 @@ mongoose.connection.once('open', initializeSites);
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Add this before your routes
+app.options('*', cors()); // Handle preflight requests
 
 // Serve static files
 app.use(express.static('public'));
