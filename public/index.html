@@ -177,7 +177,7 @@
     const registerLink = document.getElementById('registerLink');
     
     // API Configuration
-    const API_BASE = window.location.origin;
+    const API_BASE = "https://nxp-backend.onrender.com/";
     axios.defaults.baseURL = API_BASE;
     
     // State
@@ -472,7 +472,7 @@
   
   const API_BASE = isLocal ? 
     'http://localhost:10000' : 
-    'https://your-backend-service.onrender.com';
+    'https://nxp-backend.onrender.com/';
   
   axios.defaults.baseURL = API_BASE;
   console.log(`API base URL set to: ${API_BASE}`);
