@@ -221,25 +221,25 @@ app.post('/api/backlinks/upload', auth, upload.single('file'), async (req, res) 
     const results = [];
     const errors = [];
 
-    for (const row of data) {
+    for (const [index, row] of data.entries()) {
       const url = row.URL || row.url;
-      const domain = row['Site Domain'] || row.domain;
+      const domain = row['Site Domain'] || row.domain || row['Site domain'];
       
       if (!url || !domain) {
-        errors.push({ row, msg: 'Missing URL or Site Domain' });
+        errors.push({ row: index+1, msg: 'Missing URL or Site Domain' });
         continue;
       }
 
       try {
         const site = await Site.findOne({ domain });
         if (!site) {
-          errors.push({ row, msg: `Site ${domain} not found` });
+          errors.push({ row: index+1, msg: `Site ${domain} not found` });
           continue;
         }
 
         const existing = await Backlink.findOne({ url });
         if (existing) {
-          errors.push({ row, msg: 'URL already exists' });
+          errors.push({ row: index+1, msg: 'URL already exists' });
           continue;
         }
 
@@ -257,7 +257,7 @@ app.post('/api/backlinks/upload', auth, upload.single('file'), async (req, res) 
         await newBacklink.save();
         results.push(newBacklink);
       } catch (err) {
-        errors.push({ row, msg: err.message });
+        errors.push({ row: index+1, msg: err.message });
       }
     }
 
@@ -271,7 +271,6 @@ app.post('/api/backlinks/upload', auth, upload.single('file'), async (req, res) 
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 // Site Routes
 app.get('/api/sites', async (req, res) => {
   try {
