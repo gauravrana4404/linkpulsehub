@@ -465,5 +465,17 @@
       }
     }
   </script>
+  <script>
+  // Auto-configure API_BASE based on deployment environment
+  const isLocal = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1';
+  
+  const API_BASE = isLocal ? 
+    'http://localhost:10000' : 
+    'https://your-backend-service.onrender.com';
+  
+  axios.defaults.baseURL = API_BASE;
+  console.log(`API base URL set to: ${API_BASE}`);
+</script>
 </body>
 </html>
